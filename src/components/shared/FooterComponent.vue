@@ -1,52 +1,50 @@
 <template>
-    <div class="footer">
-        <div class="footer-top">
-            <!-- Contact Info -->
-            <div class="contact-info">
-                <span class="icon"><i class="fas fa-phone"></i>+52 55 1234 5678</span>
-                <span class="icon"><i class="fas fa-envelope"></i> motorsport@gmail.com</span>
-            </div>
-            <!-- Social Icons -->
-            <div class="social-icons">
-              <a href="https://www.facebook.com/KevinMor219">
-                <i class="fab fa-facebook-f"></i>
-              </a>
-              <a href="https://www.facebook.com/manueljesus.castropech">
-                <i class="fab fa-instagram"></i>
-              </a>
-                <a href="https://www.facebook.com/manueljesus.castropech">
-                <i class="fab fa-whatsapp"></i>
-                </a>
-            </div>
-        </div>
-        <!-- Divider -->
-        <hr class="footer-divider">
-        <!-- Legal Links -->
-        <div class="footer-bottom">
-            <div class="legal-links">
-                Aspectos legales | Políticas de privacidad | Seguridad | Administrar cookies
-            </div>
-        </div>
+  <div class="footer">
+    <div class="footer-top">
+      <!-- Contact Info -->
+      <div class="contact-info">
+        <span class="icon"><i class="fas fa-phone"></i>+52 55 1234 5678</span>
+        <span class="icon"><i class="fas fa-envelope"></i> motorsport@gmail.com</span>
+      </div>
+      <!-- Social Icons -->
+      <div class="social-icons">
+        <a href="https://www.facebook.com/KevinMor219">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="https://www.facebook.com/manueljesus.castropech">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://www.facebook.com/manueljesus.castropech">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </div>
     </div>
+    <!-- Divider -->
+    <hr class="footer-divider">
+    <!-- Legal Links -->
+    <div class="footer-bottom">
+      <div class="legal-links">
+        Aspectos legales | Políticas de privacidad | Seguridad | Administrar cookies
+      </div>
+    </div>
+  </div>
 </template>
-<script>
+
+<script lang="ts" setup>
 import { defineComponent } from 'vue';
-export default defineComponent({
-    name: 'FooterComponent',
-})
+
+const FooterComponent = defineComponent({
+  name: 'FooterComponent',
+});
 </script>
 
+
+
 <style scoped>
-
-
-
 /* footer */
-
-
 .footer {
   width: 100%;
   padding-top: 5rem;
-
 }
 
 .footer-top,
@@ -100,6 +98,4 @@ export default defineComponent({
   color: #ddd;
   /* Cambio de color al pasar el mouse */
 }
-
-
 </style>

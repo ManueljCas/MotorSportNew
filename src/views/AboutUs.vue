@@ -49,17 +49,9 @@
   </div>
 </template>
 
-<script>
+<script lang="ts" setup>
 import NavBarComponent from '@/components/shared/NavBarComponent.vue';
 import FooterComponent from '@/components/shared/FooterComponent.vue';
-
-export default {
-  name: 'AboutUs',
-  components: {
-      NavBarComponent,
-      FooterComponent
-  }
-};
 </script>
 
 <style scoped>

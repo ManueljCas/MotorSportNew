@@ -129,84 +129,63 @@
   </div>
 </template>
 
-<script>
-import NavBarComponent from '@/components/shared/NavBarComponent.vue';
-import FooterComponent from '@/components/shared/FooterComponent.vue';
+<script lang="ts" setup>
+import { ref, computed } from 'vue';
+import NavBarComponent from '../components/shared/NavBarComponent.vue';
+import FooterComponent from '../components/shared/FooterComponent.vue';
 
-export default {
-  name: 'Home',
-  components: {
-    NavBarComponent,
-    FooterComponent
-  },
-  data() {
-    return {
-      currentImageIndex: 0,
-      images: [ new URL('@/assets/img/nissan.jpeg', import.meta.url).href,
+const currentImageIndex = ref(0);
+const images = ref([
+  new URL('@/assets/img/nissan.jpeg', import.meta.url).href,
+  new URL('@/assets/img/HondaL.jpeg', import.meta.url).href,
+  new URL('@/assets/img/citroen.jpeg', import.meta.url).href,
+  new URL('@/assets/img/bmwL.jpeg', import.meta.url).href,
+]);
+
+const currentLeftImageIndex = ref(0);
+const leftImages = ref([new URL('@/assets/img/nissan.jpeg', import.meta.url).href,
         new URL('@/assets/img/HondaL.jpeg', import.meta.url).href,
         new URL('@/assets/img/citroen.jpeg', import.meta.url).href,
-        new URL('@/assets/img/bmwL.jpeg', import.meta.url).href],
+        new URL('@/assets/img/bmwL.jpeg', import.meta.url).href]);
 
-      // New data properties for side carousels
-      currentLeftImageIndex: 0,
-      leftImages: [ new URL('@/assets/img/nissan.jpeg', import.meta.url).href,
+const currentRightImageIndex = ref(0);
+const rightImages = ref([ new URL('@/assets/img/nissan.jpeg', import.meta.url).href,
         new URL('@/assets/img/HondaL.jpeg', import.meta.url).href,
         new URL('@/assets/img/citroen.jpeg', import.meta.url).href,
-        new URL('@/assets/img/bmwL.jpeg', import.meta.url).href],
-      currentRightImageIndex: 0,
-      rightImages: [ new URL('@/assets/img/nissan.jpeg', import.meta.url).href,
-        new URL('@/assets/img/HondaL.jpeg', import.meta.url).href,
-        new URL('@/assets/img/citroen.jpeg', import.meta.url).href,
-        new URL('@/assets/img/bmwL.jpeg', import.meta.url).href],
+        new URL('@/assets/img/bmwL.jpeg', import.meta.url).href]);
 
-      showMenu: false,
-      nissan: new URL('@/assets/img/nissan.jpeg', import.meta.url).href,
-      honda: new URL('@/assets/img/HondaL.jpeg', import.meta.url).href,
-      citroen: new URL('@/assets/img/citroen.jpeg', import.meta.url).href,
-      bmw: new URL('@/assets/img/bmwL.jpeg', import.meta.url).href,
-      videoUrl: 'https://www.youtube.com/embed/dPb3ig0LdqM',
-      videoUrl2: 'https://www.youtube.com/embed/zINZq9Bt8YU'
-    };
-  },  computed: {
-    currentImage() {
-      return this.images[this.currentImageIndex];
-    },
-    currentLeftImage() {
-      return this.leftImages[this.currentLeftImageIndex];
-    },
-    currentRightImage() {
-      return this.rightImages[this.currentRightImageIndex];
-    }
-  },
-  methods: {
-    toggleMenu() {
-      this.showMenu = !this.showMenu;
-    },
-    goToVideo() {
-      // Lógica para ir al vídeo
-      window.open('URL_del_video', '_blank');
-    },  nextImage() {
-      this.currentImageIndex = (this.currentImageIndex + 1) % this.images.length;
-    },
-    prevImage() {
-      this.currentImageIndex = (this.currentImageIndex - 1 + this.images.length) % this.images.length;
-    },
-    nextLeftImage() {
-      this.currentLeftImageIndex = (this.currentLeftImageIndex + 1) % this.leftImages.length;
-    },
-    prevLeftImage() {
-      this.currentLeftImageIndex = (this.currentLeftImageIndex - 1 + this.leftImages.length) % this.leftImages.length;
-    },
-    nextRightImage() {
-      this.currentRightImageIndex = (this.currentRightImageIndex + 1) % this.rightImages.length;
-    },
-    prevRightImage() {
-      this.currentRightImageIndex = (this.currentRightImageIndex - 1 + this.rightImages.length) % this.rightImages.length;
-    }
-  },
-  
-};
+
+const currentImage = computed(() => images.value[currentImageIndex.value]);
+const currentLeftImage = computed(() => leftImages.value[currentLeftImageIndex.value]);
+const currentRightImage = computed(() => rightImages.value[currentRightImageIndex.value]);
+const videoUrl = ref('https://www.youtube.com/embed/dPb3ig0LdqM');
+const videoUrl2 = ref('https://www.youtube.com/embed/zINZq9Bt8YU');
+
+function nextImage() {
+  currentImageIndex.value = (currentImageIndex.value + 1) % images.value.length;
+}
+
+function prevImage() {
+  currentImageIndex.value = (currentImageIndex.value - 1 + images.value.length) % images.value.length;
+}
+
+function nextLeftImage() {
+  currentLeftImageIndex.value = (currentLeftImageIndex.value + 1) % leftImages.value.length;
+}
+
+function prevLeftImage() {
+  currentLeftImageIndex.value = (currentLeftImageIndex.value - 1 + leftImages.value.length) % leftImages.value.length;
+}
+
+function nextRightImage() {
+  currentRightImageIndex.value = (currentRightImageIndex.value + 1) % rightImages.value.length;
+}
+
+function prevRightImage() {
+  currentRightImageIndex.value = (currentRightImageIndex.value - 1 + rightImages.value.length) % rightImages.value.length;
+}
 </script>
+
 
 <style scoped>
 

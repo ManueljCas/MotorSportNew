@@ -52,7 +52,7 @@
     </div>
   </template>
   
-  <script setup>
+  <script lang="ts" setup>
   import { ref } from 'vue';
   import NavBarComponent from '../components/shared/NavBarComponent.vue';
   import FooterComponent from '../components/shared/FooterComponent.vue';

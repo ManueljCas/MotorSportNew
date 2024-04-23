@@ -61,130 +61,104 @@
  
 
 </template>
-<script>
-import { db, auth } from '../services/firebase/firebaseConfig';
+<script lang="ts" setup>
+import { ref, reactive, onMounted } from 'vue';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, addDoc, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
-import NavBarComponent from '../components/shared/NavBarComponent.vue';
-import FooterComponent from '../components/shared/FooterComponent.vue';
-// En tu script, importa las imágenes.
-// Asegúrate de que las rutas sean correctas y accesibles desde tu archivo .vue.
+import { collection, addDoc, query, getDocs, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from '../services/firebase/firebaseConfig';
+import NavBarComponent from '@/components/shared/NavBarComponent.vue';
+import FooterComponent from '@/components/shared/FooterComponent.vue';
 import JeepGladiatorImage from '@/assets/img/blog/JeepGladiator.jpeg';
-import Gixxer250Image from '@/assets/img/blog/gixxer250.jpeg';
-import dominar from '@/assets/img/blog/dominar.jpeg';
 import skyline from '@/assets/img/blog/skyline.jpeg';
 import camaro from '@/assets/img/blog/camaro.jpg';
 import camaro2 from '@/assets/img/blog/camaro2.jpg';
-// Importa las demás imágenes que necesites.
 
-export default {
-  name: 'BlogAutos',
-  components: {
-    NavBarComponent,
-    FooterComponent
-  },
-  data() {
-    return {
-
-      cards: [
-        { id: 1, title: 'Jeep Gladiator 6x6', description: 'Las motorizaciones actuales son una versión turbodiésel V6 3.0L que rinde unos 623Nm de par motor, un motor HEMI 392 de 505CV y el todopoderoso HEMI 6.2 Supercharged Hellcat de 800CV. Toda esa potencia se entrega a las 4 o 6 ruedas', image: JeepGladiatorImage,likes: 0 },
-        // Repite para cada tarjeta con la imagen correspondiente importada.
+const cards = reactive([
+        { id: 1, title: 'Jeep Gladiator 6x6', description: 'Las motorizaciones actuales son una versión turbodiésel V6 3.0L que rinde unos 623Nm de par motor, un motor HEMI 392 de 505CV y el todopoderoso HEMI 6.2 Supercharged Hellcat de 800CV. Toda esa potencia se entrega a las 4 o 6 ruedas', image: JeepGladiatorImage,likes: 0 },
         { id: 2, title: 'Mustang GT Premium', description: 'El Mustang GT Premium es un icono de potencia y estilo de Ford. Con un motor V8 de alto rendimiento, ofrece una experiencia de conducción emocionante y un interior lujoso con características premium, fusionando el legado del Mustang con la modernidad.', image: camaro,likes: 0  },
         { id: 3, title: 'Ford Mustang', description: 'El Ford Mustang es un legendario automóvil deportivo estadounidense, reconocido por su diseño clásico y su potente rendimiento. Desde su debut en 1964, ha sido un ícono cultural y un símbolo de libertad y estilo.', image: camaro2,likes: 0  },
         { id: 4, title: 'Skyline R34', description: 'El R34 Skyline, un legendario automóvil deportivo japonés fabricado por Nissan, destaca por su diseño aerodinámico y su potente motor turbocharged. Es famoso por su rendimiento excepcional y su estatus icónico en la cultura automotriz.', image: skyline,likes: 0  },
+]);
 
-      ],
+const modalActive = ref(false);
+const modalTitle = ref('');
+const modalDescription = ref('');
+const modalImage = ref('');
+const modalCardId = ref(null);
+const newComment = ref('');
+const user = ref(null);
+const currentComments = ref([]);
+const newPostModal = ref(false);
+const newCard = reactive({ title: '', description: '', image: null, likes: 0 });
 
-      modalActive: false,
-      modalTitle: '',
-      modalDescription: '',
-      modalImage: '',
-      modalCardId: null, // ID de la tarjeta actual del modal
-      comments: [], // Todos los comentarios de Firestore
-      newComment: '', // Para vincular al input de nuevo comentario
-      user: null, // Representa al usuario actual
-      currentComments: [], // Comentarios del post actual
-      newPostModal: false,
-    newCard: { title: '', description: '', image: null, likes: 0 }
-    };
-  },
-  created() {
-    // Monitorear el estado de autenticación del usuario
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        this.user = user;
-      } else {
-        this.user = null;
-      }
-    });
-  },
-  methods: {
-    openModal(card) {
-      this.modalTitle = card.title;
-      this.modalDescription = card.description;
-      this.modalImage = card.image;
-      this.modalCardId = card.id;
-      this.modalActive = true;
-      this.fetchComments(card.id); // Trae los comentarios al abrir el modal
+onMounted(() => {
+  onAuthStateChanged(auth, (currentUser) => {
+    user.value = currentUser;
+  });
+});
 
-    },
-    toggleLike(card) {
-    card.likes += 1; // Simplemente incrementa el contador de likes.
-  },
-    showNewPostModal() {
-      this.newPostModal = true;
-    },
-    closeNewPostModal() {
-      this.newPostModal = false;
-    },
-    handleFileUpload(event) {
-      const file = event.target.files[0];
-      this.newCard.image = URL.createObjectURL(file);
-    },
-    addNewPost() {
-      const newId = this.cards.length + 1;
-      this.cards.push({ ...this.newCard, id: newId, image: this.newCard.image });
-      this.closeNewPostModal();
-      this.newCard = { title: '', description: '', image: null };
-    },
-    async addComment() {
-      if (!this.user) return; // Si no hay usuario, no hacer nada
-      if (!this.newComment.trim()) return; // Si no hay comentario, no hacer nada
-
-      try {
-        await addDoc(collection(db, "posts", String(this.modalCardId), "comments"), {
-          author: this.user.displayName || this.user.email, // O el campo que uses para el nombre del usuario
-          content: this.newComment,
-          createdAt: serverTimestamp()
-        });
-        this.newComment = ''; // Limpiar el campo de nuevo comentario
-        this.fetchComments(this.modalCardId); // Actualizar comentarios
-      } catch (error) {
-        console.error("Error adding comment: ", error);
-        // Manejar el error (mostrar mensaje al usuario, etc.)
-      }
-    },
-    async fetchComments(cardId) {
-      const commentsQuery = query(collection(db, "posts", String(cardId), "comments"));
-      const querySnapshot = await getDocs(commentsQuery);
-      this.currentComments = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    }, addNewPost() {
-      const newId = this.cards.length + 1;
-      this.cards.push({ ...this.newCard, id: newId, image: this.newCard.image });
-      this.closeNewPostModal();
-      this.newCard = { title: '', description: '', image: null };
-    },
-    closeModal() {
-      this.modalActive = false;
-      this.currentComments = []; // Limpiar comentarios al cerrar modal
-    }
-  }
-  , newPostModal: false,
-  newCard: { title: '', description: '', image: null }
+const openModal = (card) => {
+  modalTitle.value = card.title;
+  modalDescription.value = card.description;
+  modalImage.value = card.image;
+  modalCardId.value = card.id;
+  modalActive.value = true;
+  fetchComments(card.id);
 };
 
+const toggleLike = (card) => {
+  card.likes++;
+};
 
+const showNewPostModal = () => {
+  newPostModal.value = true;
+};
+
+const closeNewPostModal = () => {
+  newPostModal.value = false;
+};
+
+const handleFileUpload = (event) => {
+  const file = event.target.files[0];
+  newCard.image = URL.createObjectURL(file);
+};
+
+const addNewPost = () => {
+  const newId = cards.length + 1;
+  cards.push({ ...newCard, id: newId, image: newCard.image });
+  closeNewPostModal();
+  newCard.title = '';
+  newCard.description = '';
+  newCard.image = null;
+};
+
+const addComment = async () => {
+  if (!user.value || !newComment.value.trim()) return;
+  try {
+    await addDoc(collection(db, "posts", String(modalCardId.value), "comments"), {
+      author: user.value.displayName || user.value.email,
+      content: newComment.value,
+      createdAt: serverTimestamp()
+    });
+    newComment.value = '';
+    fetchComments(modalCardId.value);
+  } catch (error) {
+    console.error("Error adding comment: ", error);
+  }
+};
+
+const fetchComments = async (cardId) => {
+  const commentsQuery = query(collection(db, "posts", String(cardId), "comments"));
+  const querySnapshot = await getDocs(commentsQuery);
+  currentComments.value = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+const closeModal = () => {
+  modalActive.value = false;
+  currentComments.value = [];
+};
 </script>
+
 
 <style scoped>
 .title {
@@ -397,9 +371,6 @@ p {
   /* Estilos para el título del modal */
 }
 
-.modal-description {
-  /* Estilos para la descripción del modal */
-}
 
 .modal-close-btn {
   position: absolute;

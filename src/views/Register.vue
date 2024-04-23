@@ -25,45 +25,36 @@
     </div>
   </div>
 </template>
-
-<script>
+<script lang="ts" setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { registerUser } from '../services/authenticathion/authService';
-export default {
-  name: 'Register',
-  data() {
-    return {
-      fullName: '',
-      email: '',
-      password: '',
-      // Agregar un mensaje de error
-      errorMessage: '',
-    };
-  },
-  methods: {
-    async register() {
-      // Validar los campos del formulario
-      if (!this.fullName || !this.email || this.password.length < 8) {
-        // Aquí puedes manejar la validación y establecer un mensaje de error
-        this.errorMessage = 'Por favor, rellene todos los campos y asegúrese de que la contraseña tenga al menos 8 caracteres.';
-        alert(this.errorMessage);
-        return;
-      }
 
-      try {
-        await registerUser(this.email, this.password, this.fullName);
-        // Mostrar mensaje de éxito
-        alert('Registro exitoso. Ahora serás redirigido a la página de inicio de sesión.');
-        // Redirigir al usuario a la página de inicio de sesión
-        this.$router.push('/login');
-      } catch (error) {
-        // Manejar el error, mostrar mensaje al usuario
-        this.errorMessage = error.message;
-        alert(this.errorMessage);
-      }
-    },
-  },
+const fullName = ref('');
+const email = ref('');
+const password = ref('');
+const errorMessage = ref('');
+
+const router = useRouter();
+
+const register = async () => {
+  if (!fullName.value || !email.value || password.value.length < 8) {
+    errorMessage.value = 'Por favor, rellene todos los campos y asegúrese de que la contraseña tenga al menos 8 caracteres.';
+    alert(errorMessage.value);
+    return;
+  }
+
+  try {
+    await registerUser(email.value, password.value, fullName.value);
+    alert('Registro exitoso. Ahora serás redirigido a la página de inicio de sesión.');
+    router.push('/login');
+  } catch (error) {
+    errorMessage.value = error.message;
+    alert(errorMessage.value);
+  }
 };
 </script>
+
 
 <!-- <script>
 import { registerUser } from '../services/authentication/authService';
@@ -176,5 +167,4 @@ button:hover {
   color: red;
   margin-bottom: 1em;
 }
-
 </style>
