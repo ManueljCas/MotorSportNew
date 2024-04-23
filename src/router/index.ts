@@ -2,12 +2,12 @@
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
-import Home from '@/views/Home.vue';
-import Login from '@/views/Login.vue'; 
-import Register from '@/views/Register.vue'; 
-import AboutUs from '@/views/AboutUs.vue'; 
-import BlogAutos from '@/views/BlogAutos.vue'
-import BlogMotos from '@/views/BlogMotos.vue'
+import Home from '../views/Home.vue';
+import Login from '../views/Login.vue'; 
+import Register from '../views/Register.vue'; 
+import AboutUs from '../views/AboutUs.vue'; 
+import BlogAutos from '../views/BlogAutos.vue'
+import BlogMotos from '../views/BlogMotos.vue'
 import FAQ from '../views/FAQ.vue';
 import Comparar from '../views/ComparadorVehiculos.vue'
 
